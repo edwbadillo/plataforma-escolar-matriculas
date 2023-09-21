@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 
-from app.schoolconfig.grade.models import Grade
+from app.school.grade.models import Grade
 
 
 def create_grades(session: Session):
