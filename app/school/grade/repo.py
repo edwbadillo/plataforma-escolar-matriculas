@@ -11,7 +11,9 @@ async def get_grades(db: AsyncSession) -> list[Grade]:
     Args:
         db (AsyncSession): Sesión de base de datos
     """
-    return list(await db.scalars(select(Grade)))
+    stmt = select(Grade)
+    scalar_result = await db.scalars(stmt)
+    return scalar_result.all()
 
 
 async def exists_by_id(db: AsyncSession, id: int) -> bool:
@@ -23,4 +25,5 @@ async def exists_by_id(db: AsyncSession, id: int) -> bool:
         id (int): ID del registro a verificar
     """
     stmt = select(Grade.id).where(Grade.id == id)
-    return (await db.scalar(stmt)) is not None
+    scalar_result = await db.scalar(stmt)
+    return scalar_result is not None
