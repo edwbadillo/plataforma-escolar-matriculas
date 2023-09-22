@@ -5,6 +5,7 @@ from app.config import settings
 
 
 def migrate():
+    from app.school.academicyear.models import AcademicYear  # noqa
     from app.school.grade.models import Grade  # noqa
 
     print("Creating tables...")
