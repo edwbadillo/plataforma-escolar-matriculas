@@ -1,12 +1,16 @@
 from pydantic import TypeAdapter
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.school.grade.models import Grade
 from app.school.grade.schemas import GradeSchema
 
+from .faker import fake_grade
 
-async def test_grades_schema_list(grades: list[Grade]):
+
+async def test_grades_schema_list(db: AsyncSession):
     """Verifique que no haya problema al convertir a un modelo Pydantic desde una lista
     de objetos de SQLAlchemy"""
+
+    grades = await fake_grade(db, num_rows=2)
 
     grade = grades[0]
     grade_schema = GradeSchema.model_validate(grade)
