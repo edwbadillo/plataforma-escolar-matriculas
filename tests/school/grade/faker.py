@@ -4,27 +4,21 @@ from app.school.grade.models import Grade
 from tests.faker import fakeUS
 
 
-async def fake_grade(db: AsyncSession, *, num_rows: int = 1, **kwargs) -> list[Grade]:
+async def fake_grade(db: AsyncSession, **kwargs) -> Grade:
     """
-    Genera registros del modelo Grade con datos ficticios o especificados en kwargs.
+    Genera una instancia Grade con datos ficticios o especificados en kwargs.
 
     Args:
-        db (AsyncSession): Conexión con la base de datos.
+        db (AsyncSession): Conexión con la base de datos, útil en caso de interactuar
+        con registros existentes.
         num_rows (int, opcional): Cantidad de registros a generar, por defecto 1.
         **kwargs (dict, opcional): Campos manualmente especificados para el modelo.
 
     Returns:
-        list[Grade]: Lista de registros generados
+        Grade: Instancia del registro generado
     """
-    grades = []
-    for _ in range(num_rows):
-        grades.append(
-            Grade(
-                id=kwargs.get("id", fakeUS.random_int()),
-                name=kwargs.get("name", " ".join(fakeUS.words(nb=2))),
-                level=kwargs.get("level", fakeUS.word()),
-            )
-        )
-    db.add_all(grades)
-    await db.commit()
-    return grades
+    return Grade(
+        id=kwargs.get("id", fakeUS.random_int()),
+        name=kwargs.get("name", " ".join(fakeUS.words(nb=2))),
+        level=kwargs.get("level", fakeUS.word()),
+    )
