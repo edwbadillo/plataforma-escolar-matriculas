@@ -16,15 +16,17 @@ class BaseRepository(Generic[Model]):
     de la base de datos.
     """
 
-    def __init__(self, db: AsyncSession) -> None:
+    def __init__(self, db: AsyncSession, model: type[Model]) -> None:
         """
         Constructor del repositorio.
 
         Args:
             db (AsyncSession): Sesión de base de datos
+            model (type[Model]): Modelo de la base de datos usado para las consultas
+            base.
         """
         self._db = db
-        self._model: type[Model] = Model
+        self._model = model
 
     async def get_all(self) -> list[Model]:
         """

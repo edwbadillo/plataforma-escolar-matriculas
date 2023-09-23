@@ -1,6 +1,7 @@
 import pytest
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.school.grade.models import Grade
 from app.school.grade.repository import GradeRepository
 
 from .faker import fake_grade
@@ -8,7 +9,7 @@ from .faker import fake_grade
 
 @pytest.fixture
 def repository(db: AsyncSession):
-    return GradeRepository(db)
+    return GradeRepository(db, Grade)
 
 
 async def test_list_grades(db: AsyncSession, repository: GradeRepository):
