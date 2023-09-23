@@ -1,9 +1,9 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.school.grade.models import Grade
 
 
-def create_grades(session: Session):
+def create_grades(session: AsyncSession):
     print("Creating grades...")
     session.add_all(
         [
