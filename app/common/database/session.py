@@ -11,7 +11,7 @@ async def get_db() -> AsyncGenerator[AsyncSession, None]:
     Devuelve una nueva sesión de base de datos.
     """
     engine = create_async_engine(settings.DATABASE_URL)
-    factory = async_sessionmaker(engine)
+    factory = async_sessionmaker(engine, expire_on_commit=False)
     async with factory() as session:
         try:
             yield session

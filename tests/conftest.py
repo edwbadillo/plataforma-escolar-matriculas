@@ -21,13 +21,13 @@ async def db() -> AsyncGenerator[AsyncSession, None]:
     db_name = settings.DATABASE_URL.split("/")[-1]
     db_url = settings.DATABASE_URL.replace(f"/{db_name}", f"/{db_name}_test")
 
-    engine = create_async_engine(db_url)
+    engine = create_async_engine(db_url, echo=True)
 
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.drop_all)
         await conn.run_sync(Base.metadata.create_all)
 
-    session = async_sessionmaker(engine)()
+    session = async_sessionmaker(engine, expire_on_commit=False)()
     yield session
     await session.close()
 
