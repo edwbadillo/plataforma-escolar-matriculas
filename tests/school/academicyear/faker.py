@@ -38,6 +38,4 @@ async def fake_academic_year(
         )
     db.add_all(academic_years)
     await db.commit()
-    for academic_year in academic_years:
-        await db.refresh(academic_year)
     return academic_years
