@@ -58,3 +58,33 @@ class BaseRepository(Generic[Model]):
         Devuelve la cantidad de registros en la base de datos.
         """
         return await self._db.scalar(select(func.count(self._model.id)))
+
+    async def get_by_id(self, id: int, optional: bool = False) -> Model:
+        """
+        Devuelve el registro con el ID dado.
+
+        Args:
+            id (int): ID del registro a buscar
+            optional (bool, optional): Por defecto es False indicando que si no existe
+            un registro por el ID dado lanzará una excepción. Si se indica True es
+            posible devolver None si no existe el registro.
+
+        Returns:
+            Devuelve el registro con el ID dado o None si no existe (si optional=True).
+        """
+        stmt = select(self._model).where(self._model.id == id)
+        result = await self._db.scalars(stmt)
+
+        if optional:
+            return result.one_or_none()
+        return result.one()
+
+
+class SaveMixin(Generic[Model]):
+    async def save(self, model: Model) -> Model:
+        """
+        Guarda el modelo en la base de datos.
+        """
+        self._db.add(model)
+        await self._db.commit()
+        return model

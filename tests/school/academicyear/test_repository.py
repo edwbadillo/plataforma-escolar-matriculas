@@ -1,15 +1,10 @@
 import pytest
+import sqlalchemy
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.school.academicyear.models import AcademicYear
 from app.school.academicyear.repository import AcademicYearRepository
 
 from .faker import fake_academic_year
-
-
-@pytest.fixture
-def repository(db: AsyncSession):
-    return AcademicYearRepository(db, AcademicYear)
 
 
 async def test_list_all_academic_years(
@@ -44,3 +39,25 @@ async def test_exists_by_year(db: AsyncSession, repository: AcademicYearReposito
 
     assert await repository.exists_by_year(2020)
     assert not await repository.exists_by_year(2021)
+
+
+async def test_get_by_id(db: AsyncSession, repository: AcademicYearRepository):
+    await fake_academic_year(db, id=1)
+
+    academic_year = await repository.get_by_id(1)
+    assert academic_year.id == 1
+
+    with pytest.raises(sqlalchemy.exc.NoResultFound):
+        await repository.get_by_id(2)
+
+    academic_year = await repository.get_by_id(2, optional=True)
+    assert academic_year is None
+
+
+async def test_create_academic_year(
+    db: AsyncSession, repository: AcademicYearRepository
+):
+    academic_year = (await fake_academic_year(db, commit=False))[0]
+
+    row = await repository.save(academic_year)
+    assert row.id

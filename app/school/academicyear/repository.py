@@ -1,10 +1,10 @@
 from sqlalchemy import select
 
-from app.common.database.repository import BaseRepository
+from app.common.database.repository import BaseRepository, SaveMixin
 from app.school.academicyear.models import AcademicYear
 
 
-class AcademicYearRepository(BaseRepository[AcademicYear]):
+class AcademicYearRepository(BaseRepository[AcademicYear], SaveMixin[AcademicYear]):
     """
     Repositorio de los años escolares registrados por la institución.
     """
