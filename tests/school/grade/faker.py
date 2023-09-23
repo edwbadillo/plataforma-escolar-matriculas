@@ -21,12 +21,10 @@ async def fake_grade(db: AsyncSession, *, num_rows: int = 1, **kwargs) -> list[G
         grades.append(
             Grade(
                 id=kwargs.get("id", fakeUS.random_int()),
-                name=kwargs.get("name", fakeUS.words(nb=1)),
+                name=kwargs.get("name", " ".join(fakeUS.words(nb=2))),
                 level=kwargs.get("level", fakeUS.word()),
             )
         )
     db.add_all(grades)
     await db.commit()
-    for grade in grades:
-        await db.refresh(grade)
     return grades
