@@ -6,10 +6,10 @@ from fastapi import FastAPI
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
-from app.common.database.models import Base
 from app.common.database.session import get_db
 from app.config import settings
 from app.main import app
+from scripts.migrate import migrate_db
 
 
 @pytest_asyncio.fixture()
@@ -24,8 +24,7 @@ async def db() -> AsyncGenerator[AsyncSession, None]:
     engine = create_async_engine(db_url, echo=True)
 
     async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.drop_all)
-        await conn.run_sync(Base.metadata.create_all)
+        await migrate_db(conn, reset_db=True)
 
     session = async_sessionmaker(engine, expire_on_commit=False)()
     yield session
