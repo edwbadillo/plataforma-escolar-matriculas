@@ -74,7 +74,7 @@ async def __reset_db(conn: AsyncConnection):
     print("Tables deleted!")
 
 
-async def migrate(reset_db: bool = False):
+async def __migrate(reset_db: bool = False):
     """
     Crea la estructura de tablas de la base de datos, funciones y triggers necesarios
     en la base de datos.
@@ -83,16 +83,20 @@ async def migrate(reset_db: bool = False):
     """
     engine = create_async_engine(settings.DATABASE_URL)
     async with engine.begin() as conn:
-        if reset_db:
-            await __reset_db(conn)
+        await migrate_db(conn, reset_db)
 
-        await __create_base_functions(conn)
-        await __create_tables(conn)
-        await __create_triggers(conn)
+
+async def migrate_db(conn: AsyncConnection, reset_db: bool = False):
+    if reset_db:
+        await __reset_db(conn)
+
+    await __create_base_functions(conn)
+    await __create_tables(conn)
+    await __create_triggers(conn)
 
 
 if __name__ == "__main__":
     import sys
 
     reset_db = sys.argv[1] == "--reset"
-    asyncio.run(migrate(reset_db))
+    asyncio.run(__migrate(reset_db))
