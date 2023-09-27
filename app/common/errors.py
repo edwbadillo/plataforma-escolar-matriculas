@@ -1,6 +1,10 @@
 from dataclasses import dataclass
 
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
 from pydantic import ValidationError
+
+from .responses import FormErrorResponse
 
 
 @dataclass
@@ -75,3 +79,14 @@ class ExistsValueError(ValueError):
     def __init__(self, field: str, message: str) -> None:
         self.field = field
         self.message = message
+
+
+async def set_exceptions_handler(app: FastAPI):
+    @app.exception_handler(ExistsValueError)
+    async def exists_value_error_handler(request: Request, exc: ExistsValueError):
+        # error = FormErrorDetail(field=exc.field, message=exc.message)
+        form_error_response = FormErrorResponse(
+            message="Error de formulario",
+            errors=[FormErrorDetail(field=exc.field, message=exc.message)],
+        )
+        return JSONResponse(status_code=422, content=form_error_response.model_dump())
