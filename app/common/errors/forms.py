@@ -1,10 +1,6 @@
 from dataclasses import dataclass
 
-from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse
 from pydantic import ValidationError
-
-from .responses import FormErrorResponse
 
 
 @dataclass
@@ -22,9 +18,7 @@ class FormErrors:
 
     def __init__(self, validation_error: ValidationError) -> None:
         self._errors = validation_error.errors()
-        """Lista de errores de formulario."""
         self._total_errors = len(self._errors)
-        """Cantidad total de errores de formulario."""
 
     @property
     def total_errors(self) -> int:
@@ -68,25 +62,3 @@ class FormErrors:
 
         if type_error:
             assert type_error == error["type"]
-
-
-class ExistsValueError(ValueError):
-    """Representa un error para duplicados, errores de unicidad y otros similares."""
-
-    field: str
-    message: str
-
-    def __init__(self, field: str, message: str) -> None:
-        self.field = field
-        self.message = message
-
-
-async def set_exceptions_handler(app: FastAPI):
-    @app.exception_handler(ExistsValueError)
-    async def exists_value_error_handler(request: Request, exc: ExistsValueError):
-        # error = FormErrorDetail(field=exc.field, message=exc.message)
-        form_error_response = FormErrorResponse(
-            message="Error de formulario",
-            errors=[FormErrorDetail(field=exc.field, message=exc.message)],
-        )
-        return JSONResponse(status_code=422, content=form_error_response.model_dump())
