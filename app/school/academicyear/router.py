@@ -2,9 +2,10 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, status
 
-from app.common.responses import RESPONSE_404, ResourceCreatedResponse
+from app.common.responses import RESPONSE_404, CommonResponse, ResourceCreatedResponse
 
 from .depends import get_service
+from .messages import CREATED, UPDATED
 from .schemas import AcademicYearBasic, AcademicYearDetails, AcademicYearForm
 from .service import AcademicYearService
 
@@ -38,7 +39,13 @@ async def create(form: AcademicYearForm, service: Service) -> ResourceCreatedRes
     Crea un nuevo año escolar.
     """
     id = await service.create(form)
-    return {
-        "message": "Año escolar creado",
-        "resource_id": id,
-    }
+    return ResourceCreatedResponse(message=CREATED, resource_id=id)
+
+
+@router.put("/{id}", responses=RESPONSE_404)
+async def update(id: int, form: AcademicYearForm, service: Service) -> CommonResponse:
+    """
+    Actualiza los datos de un año escolar con los datos especificados.
+    """
+    await service.update(id, form)
+    return CommonResponse(message=UPDATED)

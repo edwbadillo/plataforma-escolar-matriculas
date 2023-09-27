@@ -1,3 +1,5 @@
+from datetime import date
+
 import pytest
 import sqlalchemy
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -36,10 +38,11 @@ async def test_count(db: AsyncSession, repository: AcademicYearRepository):
 
 
 async def test_exists_by_year(db: AsyncSession, repository: AcademicYearRepository):
-    await faker_db_func(db, fake_academic_year, year=2020)
+    academic_year = await faker_db_func(db, fake_academic_year, year=2020)
 
     assert await repository.exists_by_year(2020)
     assert not await repository.exists_by_year(2021)
+    assert not await repository.exists_by_year(2020, exclude_id=academic_year.id)
 
 
 async def test_get_by_id(db: AsyncSession, repository: AcademicYearRepository):
@@ -60,4 +63,25 @@ async def test_create_academic_year(
 ):
     academic_year = await fake_academic_year(db)
     row = await repository.save(academic_year)
+
     assert row.id
+    assert academic_year.created_at
+    assert not academic_year.updated_at
+
+
+async def test_update_academic_year(
+    db: AsyncSession, repository: AcademicYearRepository
+):
+    academic_year = await fake_academic_year(
+        db, year=2023, start_date=date(2023, 1, 1), end_date=date(2023, 12, 31)
+    )
+    await repository.save(academic_year)
+
+    academic_year.year = 2024
+    academic_year.start_date = date(2024, 1, 1)
+    academic_year.end_date = date(2024, 12, 31)
+    await repository.save(academic_year)
+
+    await db.refresh(academic_year)
+    assert academic_year.year == 2024
+    assert academic_year.updated_at

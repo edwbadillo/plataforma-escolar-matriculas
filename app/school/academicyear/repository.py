@@ -18,16 +18,19 @@ class AcademicYearRepository(BaseRepository[AcademicYear], SaveMixin[AcademicYea
         scalar_result = await self._db.scalars(stmt)
         return scalar_result.all()
 
-    async def exists_by_year(self, year: int) -> bool:
+    async def exists_by_year(self, year: int, exclude_id: int = None) -> bool:
         """
         Verifica si existe un registro con el año dado.
 
         Args:
             year (int): Año escolar a verificar
+            exclude_id (int, opcional): ID del registro a excluir.
 
         Returns:
             bool: Devuelve True si el registro existe, False si no
         """
         stmt = select(AcademicYear.year).where(AcademicYear.year == year)
+        if exclude_id:
+            stmt = stmt.where(AcademicYear.id != exclude_id)
         result = await self._db.scalar(stmt)
         return result is not None

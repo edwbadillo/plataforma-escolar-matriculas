@@ -50,6 +50,9 @@ class AcademicYearService:
 
         Returns:
             int: ID del nuevo registro
+
+        Raises:
+            ExistsValueError: Si el año escolar existe en la base de datos
         """
         if await self._repository.exists_by_year(form.year):
             raise ExistsValueError("year", YEAR_EXISTS)
@@ -57,3 +60,18 @@ class AcademicYearService:
         academic_year = AcademicYear(**form.model_dump())
         await self._repository.save(academic_year)
         return academic_year.id
+
+    async def update(self, id: int, form: AcademicYearForm) -> None:
+        """
+        Actualiza los datos de un año escolar con los datos especificados.
+
+        Args:
+            id (int): ID del año escolar, debe existir en la base de datos.
+            form (AcademicYearForm): Datos del nuevo registro a crear.
+        """
+        academic_year = await self._repository.get_by_id(id)
+
+        if await self._repository.exists_by_year(form.year, academic_year.id):
+            raise ExistsValueError("year", YEAR_EXISTS)
+
+        await self._repository.save(academic_year)

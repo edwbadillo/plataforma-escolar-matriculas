@@ -5,3 +5,5 @@ INVALID_END_DATE_BEFORE_START_DATE = (
     "La fecha de finalización no puede ser anterior a la fecha de inicio."
 )
 YEAR_EXISTS = "El año escolar ya existe."
+CREATED = "Año escolar registrado."
+UPDATED = "Año escolar actualizado."
