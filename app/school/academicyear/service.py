@@ -68,6 +68,9 @@ class AcademicYearService:
         Args:
             id (int): ID del año escolar, debe existir en la base de datos.
             form (AcademicYearForm): Datos del nuevo registro a crear.
+
+        Raises:
+            ExistsValueError: Si el año escolar existe en la base de datos
         """
         academic_year = await self._repository.get_by_id(id)
 
