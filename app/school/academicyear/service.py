@@ -1,5 +1,9 @@
+from app.common.errors import ExistsValueError
+
+from .messages import YEAR_EXISTS
 from .models import AcademicYear
 from .repository import AcademicYearRepository
+from .schemas import AcademicYearForm
 
 
 class AcademicYearService:
@@ -36,3 +40,20 @@ class AcademicYearService:
             AcademicYear: Registro de año escolar
         """
         return await self._repository.get_by_id(id)
+
+    async def create(self, form: AcademicYearForm) -> int:
+        """
+        Crea un nuevo año escolar con los datos especificados.
+
+        Args:
+            form (AcademicYearForm): Datos del nuevo registro a crear.
+
+        Returns:
+            int: ID del nuevo registro
+        """
+        if await self._repository.exists_by_year(form.year):
+            raise ExistsValueError("year", YEAR_EXISTS)
+
+        academic_year = AcademicYear(**form.model_dump())
+        await self._repository.save(academic_year)
+        return academic_year.id
