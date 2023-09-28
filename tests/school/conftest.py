@@ -1,3 +1,5 @@
+from datetime import date
+
 import pytest
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -9,4 +11,11 @@ from .academicyear.faker import fake_academic_year
 
 @pytest.fixture
 async def academic_year(db: AsyncSession) -> AcademicYear:
-    return await faker_db_func(db, fake_academic_year)
+    current_year = date.today().year
+    return await faker_db_func(
+        db,
+        fake_academic_year,
+        year=current_year,
+        start_date=date(current_year, 1, 1),
+        end_date=date(current_year, 12, 31),
+    )
