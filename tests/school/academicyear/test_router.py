@@ -9,6 +9,7 @@ from app.common.responses import CommonResponse, ResourceCreatedResponse
 from app.school.academicyear import messages
 from app.school.academicyear.models import AcademicYear
 from app.school.academicyear.router import BASE_URL
+from tests.utils import check_resource_not_found_response
 
 
 async def test_get_all(client: AsyncClient, academic_year):
@@ -38,7 +39,9 @@ async def test_get_by_id(client: AsyncClient, academic_year: AcademicYear):
     }
 
 
-# TODO: Test not found
+async def test_get_by_id_not_found(client: AsyncClient):
+    response = await client.get(f"{BASE_URL}/1")
+    check_resource_not_found_response(response)
 
 
 async def test_create(client: AsyncClient, db: AsyncSession):

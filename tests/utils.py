@@ -1,8 +1,12 @@
 from typing import Any
 
+import httpx
+from fastapi import status
 from sqlalchemy.exc import IntegrityError
 
 from app.common.database.models import Base
+from app.common.messages import RESOURCE_NOT_FOUND
+from app.common.responses import CommonResponse
 
 
 def check_constraint_violation(exc: IntegrityError, model: Base, constraint_name: str):
@@ -40,3 +44,11 @@ def check_unique_constraint_violation(
     error = str(exc)
     assert "psycopg.errors.UniqueViolation" in error
     assert f"Key ({field})=({duplicated_value}) already exists"
+
+
+def check_resource_not_found_response(response: httpx.Response):
+    """
+    Verifica que la respuesta dada sea un error de recurso no encontrado por defecto.
+    """
+    assert response.status_code == status.HTTP_404_NOT_FOUND
+    assert response.json() == CommonResponse(message=RESOURCE_NOT_FOUND).model_dump()
