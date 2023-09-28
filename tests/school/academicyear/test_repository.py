@@ -1,9 +1,9 @@
 from datetime import date
 
 import pytest
-import sqlalchemy
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.school.academicyear.exceptions import AcademicYearNotFound
 from app.school.academicyear.repository import AcademicYearRepository
 from tests.faker import faker_db_func
 
@@ -31,12 +31,6 @@ async def test_exists_by_id(db: AsyncSession, repository: AcademicYearRepository
     assert not await repository.exists_by_id(2)
 
 
-async def test_count(db: AsyncSession, repository: AcademicYearRepository):
-    await faker_db_func(db, fake_academic_year, num_rows=3)
-
-    assert await repository.count() == 3
-
-
 async def test_exists_by_year(db: AsyncSession, repository: AcademicYearRepository):
     academic_year = await faker_db_func(db, fake_academic_year, year=2020)
 
@@ -51,11 +45,8 @@ async def test_get_by_id(db: AsyncSession, repository: AcademicYearRepository):
     academic_year = await repository.get_by_id(1)
     assert academic_year.id == 1
 
-    with pytest.raises(sqlalchemy.exc.NoResultFound):
+    with pytest.raises(AcademicYearNotFound):
         await repository.get_by_id(2)
-
-    academic_year = await repository.get_by_id(2, optional=True)
-    assert academic_year is None
 
 
 async def test_create_academic_year(

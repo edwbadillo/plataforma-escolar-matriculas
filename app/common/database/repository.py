@@ -88,3 +88,10 @@ class SaveMixin(Generic[Model]):
         self._db.add(model)
         await self._db.commit()
         return model
+
+
+class DBRepository:
+    """Clase base de cualquier repositorio que se conecta a la base de datos."""
+
+    def __init__(self, db: AsyncSession) -> None:
+        self._db = db

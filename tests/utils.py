@@ -19,7 +19,11 @@ def check_constraint_violation(exc: IntegrityError, model: Base, constraint_name
     assert "psycopg.errors.CheckViolation" in error
 
     table_name = model.__tablename__
-    assert f'"{table_name}" violates check constraint "{constraint_name}"' in error
+
+    # Revise las convenciones de nombres en Base.metadata
+    db_constraint_name = f"{table_name}_{constraint_name}_check"
+
+    assert f'"{table_name}" violates check constraint "{db_constraint_name}"' in error
 
 
 def check_unique_constraint_violation(
