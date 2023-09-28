@@ -74,7 +74,8 @@ class AcademicYearService:
         """
         academic_year = await self._repository.get_by_id(id)
 
-        if await self._repository.exists_by_year(form.year, academic_year.id):
-            raise ExistsValueError("year", YEAR_EXISTS)
+        # No tiene sentido cambiar el año, solo actualiza las fechas.
+        academic_year.start_date = form.start_date
+        academic_year.end_date = form.end_date
 
         await self._repository.save(academic_year)
