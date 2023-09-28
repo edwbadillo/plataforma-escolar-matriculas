@@ -1,3 +1,5 @@
+from typing import Sequence
+
 from app.common.errors import ExistsValueError
 
 from .messages import YEAR_EXISTS
@@ -20,7 +22,7 @@ class AcademicYearService:
         """
         self._repository = repository
 
-    async def get_all(self) -> list[AcademicYear]:
+    async def get_all(self) -> Sequence[AcademicYear]:
         """
         Devuelve todos los años escolares registrados.
 

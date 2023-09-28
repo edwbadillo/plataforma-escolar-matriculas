@@ -16,7 +16,8 @@ class AcademicYearRepository(DBRepository):
 
     async def get_all(self) -> Sequence[AcademicYear]:
         """
-        Lista todos los años escolares registrados.
+        Lista todos los años escolares registrados ordenados por el mas reciente al mas
+        antiguo.
 
         Returns:
             list[AcademicYear]: Lista de años escolares
