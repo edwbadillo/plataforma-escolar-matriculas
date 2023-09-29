@@ -23,7 +23,10 @@ async def get_all(
     Args:
         db (AsyncSession): Sesión de base de datos
         model (type[M]): Modelo a consultar
-        stmt (Select, opcional): Consulta específica a realiazar.
+        stmt (Select, opcional): Consulta específica a realizar.
+
+    Returns:
+        Sequence[M]: Lista de registros de la base de datos
     """
     if stmt is None:
         stmt = select(model)
@@ -88,6 +91,9 @@ async def save(db: AsyncSession, model: type[M], refresh: bool = False) -> M:
         información del modelo con el de la base de datos, esto es útil cuando la base
         de datos realiza procesos adicionales como la ejecución de triggers para la
         asignación de valores a otros campos. Por defecto es False.
+
+    Returns:
+        M: Modelo guardado
     """
     db.add(model)
     await db.commit()
