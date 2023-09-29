@@ -20,6 +20,10 @@ class EducationLevel(Base):
     """Un número que indica el orden o nivel de un nivel educativo con el fin de ordenar
     y determinar qué nivel educativo es superior o inferior a otro."""
 
+    # Relaciones - ORM
+    grades: Mapped[list["Grade"]] = relationship(back_populates="education_level")
+    """Lista de grados del nivel educativo."""
+
 
 class Grade(Base):
     """
@@ -42,6 +46,8 @@ class Grade(Base):
 
     # Llaves foráneas
     education_level_id: Mapped[IntPK] = mapped_column(ForeignKey("education_level.id"))
+    """ID del nivel educativo al que pertenece el grado escolar."""
 
     # Relaciones - ORM
-    education_level: Mapped["EducationLevel"] = relationship()
+    education_level: Mapped["EducationLevel"] = relationship(back_populates="grades")
+    """Instancia del nivel educativo al que pertenece el grado escolar."""
