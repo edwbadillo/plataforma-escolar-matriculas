@@ -1,6 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.school.grade.models import Grade
+from app.school.educationlevel.models import Grade
 
 
 def create_grades(session: AsyncSession):

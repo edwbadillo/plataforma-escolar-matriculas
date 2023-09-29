@@ -8,7 +8,7 @@ from app.config import settings
 
 # Importar todos los modelos SQLAlchemy
 from app.school.academicyear.models import AcademicYear  # noqa
-from app.school.grade.models import Grade  # noqa
+from app.school.educationlevel.models import EducationLevel, Grade  # noqa
 
 
 async def __create_auto_updated_at_function(conn: AsyncConnection) -> None:
@@ -98,5 +98,5 @@ async def migrate_db(conn: AsyncConnection, reset_db: bool = False):
 if __name__ == "__main__":
     import sys
 
-    reset_db = sys.argv[1] == "--reset"
+    reset_db = len(sys.argv) > 1 and sys.argv[1] == "--reset"
     asyncio.run(__migrate(reset_db))
